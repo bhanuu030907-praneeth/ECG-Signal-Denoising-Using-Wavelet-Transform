@@ -1,55 +1,60 @@
-# ECG-Signal-Denoising-Using-Wavelet-Transform
-ECG signal denoising using Discrete Wavelet Transform (DWT) in Python to remove baseline drift, powerline interference, and EMG noise. Implements wavelet decomposition, thresholding, and reconstruction, with performance evaluation using SNR and MSE and visualization of results.
-import numpy as np
-import matplotlib.pyplot as plt
-import pywt
+ECG Signal Denoising using Discrete Wavelet Transform (DWT)
 
-fs = 1000
-t = np.linspace(0, 1, fs)
+This project implements ECG signal denoising using Discrete Wavelet Transform (DWT) in Python. The objective is to remove noise such as baseline drift, power line interference, and EMG noise from ECG signals while preserving important features.
 
-ecg_clean = np.sin(2 * np.pi * 5 * t) + 0.5 * np.sin(2 * np.pi * 15 * t)
+## Overview
+Electrocardiogram (ECG) signals are often corrupted by different types of noise during acquisition. This project uses wavelet decomposition and thresholding techniques to effectively denoise the ECG signal.
 
-baseline_drift = 0.5 * np.sin(2 * np.pi * 0.5 * t)
-powerline_noise = 0.2 * np.sin(2 * np.pi * 50 * t)
-emg_noise = 0.3 * np.random.randn(len(t))
+## Features
+- Synthetic ECG signal generation
+- Addition of multiple noise types
+- DWT-based signal decomposition
+- Soft thresholding for noise removal
+- Signal reconstruction
+- Performance evaluation using MSE and SNR
+- Visualization of clean, noisy, and denoised signals
 
-ecg_noisy = ecg_clean + baseline_drift + powerline_noise + emg_noise
+## Technologies Used
+- Python
+- NumPy
+- Matplotlib
+- PyWavelets
+- SciPy
 
-def dwt_denoise(signal, wavelet='db4', level=4):
-    coeffs = pywt.wavedec(signal, wavelet, level=level)
-    sigma = np.median(np.abs(coeffs[-1])) / 0.6745
-    threshold = sigma * np.sqrt(2 * np.log(len(signal)))
-    new_coeffs = [pywt.threshold(c, threshold, mode='soft') for c in coeffs]
-    return pywt.waverec(new_coeffs, wavelet)
+## Methodology
+1. Generate or input ECG signal
+2. Add noise (baseline drift, powerline noise, EMG noise)
+3. Apply Discrete Wavelet Transform (DWT)
+4. Perform thresholding on wavelet coefficients
+5. Reconstruct the signal using inverse DWT
+6. Evaluate performance using MSE and SNR
 
-ecg_denoised = dwt_denoise(ecg_noisy)
+## Performance Metrics
+- Mean Squared Error (MSE)
+- Signal-to-Noise Ratio (SNR)
 
-def mse(x, y):
-    return np.mean((x - y) ** 2)
+## Project Structure
+ECG-DWT-Denoising/
+│── ecg_dwt_denoising.ipynb
+│── README.md
+│── requirements.txt
 
-def snr(x, y):
-    noise = x - y
-    return 10 * np.log10(np.sum(x ** 2) / np.sum(noise ** 2))
+## Installation
+Install required libraries using:
+pip install numpy matplotlib pywavelets scipy
 
-mse_value = mse(ecg_clean, ecg_denoised)
-snr_value = snr(ecg_clean, ecg_denoised)
+## Usage
+Run the Jupyter Notebook file:
+ecg_dwt_denoising.ipynb
 
-plt.figure(figsize=(12, 8))
+## Reference
+https://doi.org/10.3991/ijoe.v13i09.7159
 
-plt.subplot(3, 1, 1)
-plt.plot(t, ecg_clean)
-plt.title("Clean ECG")
+## Future Enhancements
+- Use real ECG datasets (MIT-BIH)
+- Compare different wavelets (db4, sym4, coif5)
+- Implement advanced thresholding techniques
+- Build real-time ECG denoising system
 
-plt.subplot(3, 1, 2)
-plt.plot(t, ecg_noisy)
-plt.title("Noisy ECG")
-
-plt.subplot(3, 1, 3)
-plt.plot(t, ecg_denoised)
-plt.title("DWT Denoised ECG")
-
-plt.tight_layout()
-plt.show()
-
-print("MSE:", mse_value)
-print("SNR:", snr_value)
+## Author
+Bhanu Praneeth
