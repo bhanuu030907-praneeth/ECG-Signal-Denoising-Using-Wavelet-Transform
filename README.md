@@ -57,4 +57,4 @@ https://doi.org/10.3991/ijoe.v13i09.7159
 - Build real-time ECG denoising system
 
 ## Author
-Bhanu Praneeth
+Bhanu Praneeth,Avinash
